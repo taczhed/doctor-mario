@@ -1,0 +1,31 @@
+body {
+    background-color: #555;
+}
+
+table {
+    position: absolute;
+    width: 240px;
+    left: calc(50% - 120px);
+    margin: 0;
+    padding: 0;
+}
+
+td {
+    border: 1px solid black;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.salmon {
+    background-color: salmon;
+}
+
+.blue {
+    background-color: royalblue;
+}
+
+.yellow {
+    background-color: yellow;
+}
