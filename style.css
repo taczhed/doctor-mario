@@ -1,24 +1,37 @@
 body {
-    background-color: #555;
+    background-color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+div#game {
+    position: absolute;
+    left: calc(50% - 640px / 2);
+    top: calc(50% - 384px / 2);
+    width: 640px;
+    height: 384px;
+    background-image: url("img/pf.png");
 }
 
 table {
     position: absolute;
-    width: 240px;
-    left: calc(50% - 120px);
+    width: 128px;
+    left: 273px;
+    top: 95px;
     margin: 0;
     padding: 0;
+    border-spacing: 0px 0px;
+    /* border: 1px solid red; */
 }
 
 td {
-    border: 1px solid black;
-    width: 30px;
-    height: 30px;
+    width: 16px;
+    height: 16px;
     margin: 0;
     padding: 0;
 }
 
-.salmon {
+/* .salmon {
     background-color: salmon;
 }
 
@@ -28,4 +41,4 @@ td {
 
 .yellow {
     background-color: yellow;
-}
+} */
