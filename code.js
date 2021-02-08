@@ -14,6 +14,7 @@ let goFast = true
 let pillNumber = 0
 let lastKey
 let waiting = false
+let keysActive = true
 
 const elements = {
 
@@ -209,7 +210,9 @@ const elements = {
                 // console.log("puszczono: " + e.keyCode)
             }
         }
+
         function checkKey(e) {
+
             // console.log("wcisnieto: " + e.keyCode)
             removeEventListener("keydown", checkKey)
             lastKey = e.keyCode
@@ -322,7 +325,6 @@ const elements = {
                     }
                 }
             }
-
             elements.renderGameboard()
         }
     },
@@ -353,20 +355,23 @@ const elements = {
 
                     //resetowanie
 
-                    if (goFast == false) {
-                        elements.movePill()
-                    }
-
                     clearInterval(falling)
                     activeRow = 0
                     activeCell = 0
                     state = "horizontal"
                     clearInterval(fastFalling)
-                    goFast = true
+                    gameBoard = []
+                    elements.createArray()
 
                     setTimeout(() => {
-                        elements.createArray()
+
+                        if (goFast == false) {
+                            elements.movePill()
+                        }
+
                         elements.getRandomPill()
+                        goFast = true
+
                     }, 1000);
                 }
                 saveData()
@@ -403,8 +408,6 @@ const elements = {
                     }
                 }
             }
-
-            console.log(posiitonsToDelete)
 
             for (let i = 0; i < posiitonsToDelete.length; i++) {
                 let y = posiitonsToDelete[i][0]

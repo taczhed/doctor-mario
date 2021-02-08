@@ -31,6 +31,13 @@ td {
     padding: 0;
 }
 
+/* div#pill{
+    position: absolute;
+    width: 32px;
+    height: 16px;
+    background-color: red;
+} */
+
 /* .salmon {
     background-color: salmon;
 }
