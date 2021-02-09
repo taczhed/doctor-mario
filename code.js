@@ -150,24 +150,25 @@ const elements = {
                 }
 
                 function renderHit() {
-                    if (pairsBoard[y][x] != 0) {
-                        if (scoreBoard[y][x] == 4) {
-                            td.style.backgroundImage = "url('img/" + 1 + "/1_o.png')"
-                        } else if (scoreBoard[y][x] == 5) {
-                            td.style.backgroundImage = "url('img/" + 2 + "/2_o.png')"
-                        } else if (scoreBoard[y][x] == 6) {
-                            td.style.backgroundImage = "url('img/" + 3 + "/3_o.png')"
-                        }
-                    } else if (pairsBoard[y][x] == 0) {
-                        if (scoreBoard[y][x] == 4) {
-                            td.style.backgroundImage = "url('img/" + 1 + "/1_x.png')"
-                        } else if (scoreBoard[y][x] == 5) {
-                            td.style.backgroundImage = "url('img/" + 2 + "/2_x.png')"
-                        } else if (scoreBoard[y][x] == 6) {
-                            td.style.backgroundImage = "url('img/" + 3 + "/3_x.png')"
-                        }
-                    }
+                    if (pairsBoard[y][x] != 0 && scoreBoard[y][x] == 4) {
+                        td.style.backgroundImage = "url('img/1/1_o.png')"
 
+                    } else if (pairsBoard[y][x] != 0 && scoreBoard[y][x] == 5) {
+                        td.style.backgroundImage = "url('img/2/2_o.png')"
+
+                    } else if (pairsBoard[y][x] != 0 && scoreBoard[y][x] == 6) {
+                        td.style.backgroundImage = "url('img/3/3_o.png')"
+
+                    } else if (pairsBoard[y][x] == 0 && scoreBoard[y][x] == 4) {
+                        td.style.backgroundImage = "url('img/1/1_x.png')"
+
+                    } else if (pairsBoard[y][x] == 0 && scoreBoard[y][x] == 5) {
+                        td.style.backgroundImage = "url('img/2/2_x.png')"
+
+                    } else if (pairsBoard[y][x] == 0 && scoreBoard[y][x] == 6) {
+                        td.style.backgroundImage = "url('img/3/3_x.png')"
+
+                    }
                 }
                 renderPill()
                 renderPillBoard()
@@ -175,6 +176,7 @@ const elements = {
                 renderHit()
             }
         }
+
 
         //sprawdzenie activeCell
         for (let i = 0; i < 8; i++) {
@@ -480,9 +482,16 @@ const elements = {
                 let y = posiitonsToDelete[i][0]
                 let x = posiitonsToDelete[i][1]
 
-                scoreBoard[y][x] = scoreBoard[y][x] + 3
+                if (scoreBoard[y][x] == 1) {
+                    scoreBoard[y][x] = 4
+                } else if (scoreBoard[y][x] == 2) {
+                    scoreBoard[y][x] = 5
+                } else if (scoreBoard[y][x] == 3) {
+                    scoreBoard[y][x] = 6
+                }
 
                 elements.renderGameboard()
+                console.log(scoreBoard)
 
                 setTimeout(() => {
                     scoreBoard[y][x] = 0
