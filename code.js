@@ -1,5 +1,6 @@
 //global
 "use strict";
+let level = 4
 let gameBoard = []
 let scoreBoard = []
 let pairsBoard = []
@@ -137,8 +138,19 @@ const elements = {
                     }
                 }
 
+                function renderVirus() {
+                    if (scoreBoard[y][x] == 1 && pairsBoard[y][x] == 0) {
+                        td.style.backgroundImage = "url('img/" + 1 + "/covid_brown.png')"
+                    } else if (scoreBoard[y][x] == 2 && pairsBoard[y][x] == 0) {
+                        td.style.backgroundImage = "url('img/" + 2 + "/covid_blue.png')"
+                    } else if (scoreBoard[y][x] == 3 && pairsBoard[y][x] == 0) {
+                        td.style.backgroundImage = "url('img/" + 3 + "/covid_yellow.png')"
+                    }
+                }
+
                 renderPill()
                 renderPillBoard()
+                renderVirus()
 
                 //odpowanienie kolorwanie
 
@@ -198,6 +210,41 @@ const elements = {
 
         }, 500);
     },
+
+    spawnCoronaVirus: function () {
+
+        let viruses = []
+        let pos = []
+        let count = 3
+
+        for (let v = 0; v < count; v++) {
+            let virus = Math.floor(Math.random() * 3) + 1
+
+            if (viruses.includes(virus)) {
+                count++
+            } else {
+                viruses.push(virus)
+            }
+        }
+
+        for (let v = 0; v < level - 3; v++) {
+            let lastVirus = viruses[v]
+            viruses.push(lastVirus)
+        }
+        count = viruses.length
+        for (let v = 0; v < count; v++) {
+
+            let y = Math.floor(Math.random() * (15 - 5 + 1) + 5)
+            let x = Math.floor(Math.random() * (7 - 0 + 1) + 0)
+            if (pos.includes(x + "_" + y)) {
+                v -= 1
+            } else {
+                pos.push(x + "_" + y)
+                scoreBoard[y][x] = viruses[v]
+            }
+        }
+    },
+
 
     movePill: function () {
 
@@ -278,22 +325,26 @@ const elements = {
             }
             else if (e.keyCode == '40' || e.keyCode == '83') {
                 //dół
-                clearInterval(falling)
-                if (goFast == true) {
-                    fastFalling = setInterval(() => {
 
-                        removeEventListener("keydown", checkKey)
-                        removeEventListener("keyup", backKey)
-                        goFast = false
+                if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
 
-                        let last = gameBoard.pop()
-                        gameBoard.unshift(last)
+                    clearInterval(falling)
+                    if (goFast == true) {
+                        fastFalling = setInterval(() => {
 
-                        elements.renderGameboard()
-                        activeRow++
-                        elements.gameMechanic()
+                            removeEventListener("keydown", checkKey)
+                            removeEventListener("keyup", backKey)
+                            goFast = false
 
-                    }, 50);
+                            let last = gameBoard.pop()
+                            gameBoard.unshift(last)
+
+                            elements.renderGameboard()
+                            activeRow++
+                            elements.gameMechanic()
+
+                        }, 50);
+                    }
                 }
             }
             else if (e.keyCode == '37' || e.keyCode == '65') {
@@ -423,5 +474,6 @@ const elements = {
 
 elements.createArray()
 elements.createGameStateArray()
+elements.spawnCoronaVirus()
 elements.getRandomPill()
 elements.movePill()
