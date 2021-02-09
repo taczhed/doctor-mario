@@ -16,6 +16,7 @@ let pillNumber = 0
 let lastKey
 let waiting = false
 let keysActive = true
+let hittingTime = false
 
 const elements = {
 
@@ -148,21 +149,30 @@ const elements = {
                     }
                 }
 
+                function renderHit() {
+                    if (pairsBoard[y][x] != 0) {
+                        if (scoreBoard[y][x] == 4) {
+                            td.style.backgroundImage = "url('img/" + 1 + "/1_o.png')"
+                        } else if (scoreBoard[y][x] == 5) {
+                            td.style.backgroundImage = "url('img/" + 2 + "/2_o.png')"
+                        } else if (scoreBoard[y][x] == 6) {
+                            td.style.backgroundImage = "url('img/" + 3 + "/3_o.png')"
+                        }
+                    } else if (pairsBoard[y][x] == 0) {
+                        if (scoreBoard[y][x] == 4) {
+                            td.style.backgroundImage = "url('img/" + 1 + "/1_x.png')"
+                        } else if (scoreBoard[y][x] == 5) {
+                            td.style.backgroundImage = "url('img/" + 2 + "/2_x.png')"
+                        } else if (scoreBoard[y][x] == 6) {
+                            td.style.backgroundImage = "url('img/" + 3 + "/3_x.png')"
+                        }
+                    }
+
+                }
                 renderPill()
                 renderPillBoard()
                 renderVirus()
-
-                //odpowanienie kolorwanie
-
-                // if (gameBoard[y][x] == 1 || scoreBoard[y][x] == 1) {
-                //     td.classList.add("salmon")
-
-                // } else if (gameBoard[y][x] == 2 || scoreBoard[y][x] == 2) {
-                //     td.classList.add("blue")
-
-                // } else if (gameBoard[y][x] == 3 || scoreBoard[y][x] == 3) {
-                //     td.classList.add("yellow")
-                // }
+                renderHit()
             }
         }
 
@@ -260,123 +270,129 @@ const elements = {
 
         function checkKey(e) {
 
-            // console.log("wcisnieto: " + e.keyCode)
-            removeEventListener("keydown", checkKey)
-            lastKey = e.keyCode
-            if (e.keyCode == '38' || e.keyCode == '87') {
-                //góra
+            if (keysActive == true) {
 
-                if (activeRow != 0) {
+                // console.log("wcisnieto: " + e.keyCode)
+                removeEventListener("keydown", checkKey)
+                lastKey = e.keyCode
+                if (e.keyCode == '38' || e.keyCode == '87') {
+                    //góra
 
-                    if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
+                    if (activeRow != 0) {
 
-                        if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical") {
+                        if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
 
-                            gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow - 1][activeCell]
-                            gameBoard[activeRow - 1][activeCell] = 0
-                            state = "horizontal"
-                        }
+                            if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
 
-                    } else if (state == "horizontal") {
+                                gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow - 1][activeCell]
+                                gameBoard[activeRow - 1][activeCell] = 0
+                                state = "horizontal"
+                            }
 
-                        gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell + 1]
-                        gameBoard[activeRow][activeCell + 1] = 0
-                        state = "vertical"
+                        } else if (state == "horizontal") {
 
-                    } else {
+                            gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell + 1]
+                            gameBoard[activeRow][activeCell + 1] = 0
+                            state = "vertical"
 
-                        gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow][activeCell]
-                        gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
-                        gameBoard[activeRow - 1][activeCell] = 0
-                        state = "horizontal"
-                    }
-                    // console.log(state)
+                        } else {
 
-                }
-            }
-            else if (e.keyCode == '16') {
-                // shift
-                if (activeRow != 0) {
-
-                    if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
-
-                        if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical") {
-
-                            gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow][activeCell]
+                            gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow][activeCell]
                             gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
                             gameBoard[activeRow - 1][activeCell] = 0
                             state = "horizontal"
                         }
+                        // console.log(state)
 
-                    } else if (state == "horizontal") {
+                    }
+                }
+                else if (e.keyCode == '16') {
+                    // shift
+                    if (activeRow != 0) {
 
-                        gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell]
-                        gameBoard[activeRow][activeCell] = gameBoard[activeRow][activeCell + 1]
-                        gameBoard[activeRow][activeCell + 1] = 0
-                        state = "vertical"
+                        if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
+
+                            if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
+
+                                gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow][activeCell]
+                                gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
+                                gameBoard[activeRow - 1][activeCell] = 0
+                                state = "horizontal"
+                            }
+
+                        } else if (state == "horizontal") {
+
+                            gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell]
+                            gameBoard[activeRow][activeCell] = gameBoard[activeRow][activeCell + 1]
+                            gameBoard[activeRow][activeCell + 1] = 0
+                            state = "vertical"
+
+                        } else {
+
+                            gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow - 1][activeCell]
+                            gameBoard[activeRow - 1][activeCell] = 0
+                            state = "horizontal"
+                        }
+                    }
+                }
+                else if (e.keyCode == '40' || e.keyCode == '83') {
+                    //dół
+
+                    if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
+
+
+                        clearInterval(falling)
+                        if (goFast == true) {
+                            fastFalling = setInterval(() => {
+
+                                removeEventListener("keydown", checkKey)
+                                removeEventListener("keyup", backKey)
+                                goFast = false
+
+                                let last = gameBoard.pop()
+                                gameBoard.unshift(last)
+
+                                elements.renderGameboard()
+                                activeRow++
+                                elements.gameMechanic()
+
+                            }, 20);
+                        }
+
+                    }
+                }
+                else if (e.keyCode == '37' || e.keyCode == '65') {
+                    //lewo
+
+
+                    if (gameBoard[activeRow][0] != 0 || scoreBoard[activeRow][activeCell - 1] != 0 && state == "horizontal") {
+                    } else if (state == "vertical" && scoreBoard[activeRow][activeCell - 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell - 1] != 0) {
 
                     } else {
 
-                        gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow - 1][activeCell]
-                        gameBoard[activeRow - 1][activeCell] = 0
-                        state = "horizontal"
+                        for (let y = 0; y < 16; y++) {
+                            let firstColumn = gameBoard[y].shift()
+                            gameBoard[y].push(firstColumn)
+                        }
+                    }
+
+                }
+                else if (e.keyCode == '39' || e.keyCode == '68') {
+                    //prawo
+
+                    if (gameBoard[activeRow][7] != 0 || scoreBoard[activeRow][activeCell + 2] != 0 && state == "horizontal") {
+                    } else if (state == "vertical" && scoreBoard[activeRow][activeCell + 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell + 1] != 0) {
+
+                    } else {
+
+                        for (let y = 0; y < 16; y++) {
+                            let lastColumn = gameBoard[y].pop()
+                            gameBoard[y].unshift(lastColumn)
+                        }
                     }
                 }
+                elements.renderGameboard()
             }
-            else if (e.keyCode == '40' || e.keyCode == '83') {
-                //dół
-
-                if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
-
-                    clearInterval(falling)
-                    if (goFast == true) {
-                        fastFalling = setInterval(() => {
-
-                            removeEventListener("keydown", checkKey)
-                            removeEventListener("keyup", backKey)
-                            goFast = false
-
-                            let last = gameBoard.pop()
-                            gameBoard.unshift(last)
-
-                            elements.renderGameboard()
-                            activeRow++
-                            elements.gameMechanic()
-
-                        }, 50);
-                    }
-                }
-            }
-            else if (e.keyCode == '37' || e.keyCode == '65') {
-                //lewo
-
-                if (gameBoard[activeRow][0] != 0 || scoreBoard[activeRow][activeCell - 1] != 0 && state == "horizontal") {
-                } else if (state == "vertical" && scoreBoard[activeRow][activeCell - 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell - 1] != 0) {
-
-                } else {
-
-                    for (let y = 0; y < 16; y++) {
-                        let firstColumn = gameBoard[y].shift()
-                        gameBoard[y].push(firstColumn)
-                    }
-                }
-
-            }
-            else if (e.keyCode == '39' || e.keyCode == '68') {
-                //prawo
-
-                if (gameBoard[activeRow][7] != 0 || scoreBoard[activeRow][activeCell + 2] != 0 && state == "horizontal") {
-                } else if (state == "vertical" && scoreBoard[activeRow][activeCell + 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell + 1] != 0) {
-
-                } else {
-
-                    for (let y = 0; y < 16; y++) {
-                        let lastColumn = gameBoard[y].pop()
-                        gameBoard[y].unshift(lastColumn)
-                    }
-                }
-            }
-            elements.renderGameboard()
         }
     },
 
@@ -392,10 +408,8 @@ const elements = {
                         for (let x = 0; x < 8; x++) {
 
                             if (gameBoard[y][x] != 0) {
-                                // console.log(gameBoard)
                                 scoreBoard[y][x] = gameBoard[y][x]
                                 pairsBoard[y][x] = pillNumber
-                                // console.log(pairsBoard)
                             }
                         }
                     }
@@ -407,6 +421,7 @@ const elements = {
                     //resetowanie
 
                     clearInterval(falling)
+                    keysActive = false
                     activeRow = 0
                     activeCell = 0
                     state = "horizontal"
@@ -422,6 +437,7 @@ const elements = {
 
                         elements.getRandomPill()
                         goFast = true
+                        keysActive = true
 
                     }, 1000);
                 }
@@ -464,8 +480,16 @@ const elements = {
                 let y = posiitonsToDelete[i][0]
                 let x = posiitonsToDelete[i][1]
 
-                scoreBoard[y][x] = 0
-                pairsBoard[y][x] = 0
+                scoreBoard[y][x] = scoreBoard[y][x] + 3
+
+                elements.renderGameboard()
+
+                setTimeout(() => {
+                    scoreBoard[y][x] = 0
+                    pairsBoard[y][x] = 0
+                    elements.renderGameboard()
+
+                }, 200);
             }
         }
         fallingValidation()
