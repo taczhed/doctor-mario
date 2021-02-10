@@ -200,7 +200,6 @@ const elements = {
         console.log("Tabletka nr: " + pillNumber)
 
         elements.renderGameboard()
-        elements.pillInterval()
     },
 
     pillInterval: function () {
@@ -416,9 +415,15 @@ const elements = {
                         }
                     }
 
-                    hitValidation(1)
-                    hitValidation(2)
-                    hitValidation(3)
+                    let grav = setInterval(() => {
+
+                        hitValidation(1)
+                        hitValidation(2)
+                        hitValidation(3)
+                        gravity()
+                        elements.renderGameboard()
+
+                    }, 50);
 
                     //resetowanie
 
@@ -431,13 +436,16 @@ const elements = {
                     gameBoard = []
                     elements.createArray()
 
+                    elements.getRandomPill() //Ważne
+
                     setTimeout(() => {
+                        clearInterval(grav)
 
                         if (goFast == false) {
                             elements.movePill()
                         }
 
-                        elements.getRandomPill()
+                        elements.pillInterval()
                         goFast = true
                         keysActive = true
 
@@ -501,6 +509,60 @@ const elements = {
                 }, 200);
             }
         }
+
+        function gravity() {
+
+            for (let y = 15; y >= 0; y--) {
+                for (let x = 7; x >= 0; x--) {
+
+                    if (scoreBoard[y][x] != 0 && pairsBoard[y][x] != 0) {
+                        //wykluczyć wirusy!
+
+                        if (pairsBoard[y][x] == pairsBoard[y][x + 1] && scoreBoard[y + 1][x] == 0 && scoreBoard[y + 1][x + 1] == 0) {
+                            //zrzucaj pare w dół
+
+                            pairsBoard[y + 1][x] = pairsBoard[y][x]
+                            pairsBoard[y][x] = 0
+
+                            pairsBoard[y + 1][x + 1] = pairsBoard[y][x + 1]
+                            pairsBoard[y][x + 1] = 0
+
+                            scoreBoard[y + 1][x] = scoreBoard[y][x]
+                            scoreBoard[y][x] = 0
+
+                            scoreBoard[y + 1][x + 1] = scoreBoard[y][x + 1]
+                            scoreBoard[y][x + 1] = 0
+
+                        } else if (pairsBoard[y][x] == pairsBoard[y][x - 1] && scoreBoard[y + 1][x] == 0 && scoreBoard[y + 1][x - 1] == 0) {
+                            //zrzucaj pare w dół
+
+                            pairsBoard[y + 1][x] = pairsBoard[y][x]
+                            pairsBoard[y][x] = 0
+
+                            pairsBoard[y + 1][x - 1] = pairsBoard[y][x - 1]
+                            pairsBoard[y][x - 1] = 0
+
+                            scoreBoard[y + 1][x] = scoreBoard[y][x]
+                            scoreBoard[y][x] = 0
+
+                            scoreBoard[y + 1][x - 1] = scoreBoard[y][x - 1]
+                            scoreBoard[y][x - 1] = 0
+
+                        } else if (pairsBoard[y][x - 1] != pairsBoard[y][x] && pairsBoard[y][x + 1] != pairsBoard[y][x] && scoreBoard[y + 1][x] == 0) { //?
+                            //zrzucaj w dół
+
+                            pairsBoard[y + 1][x] = pairsBoard[y][x]
+                            pairsBoard[y][x] = 0
+
+                            scoreBoard[y + 1][x] = scoreBoard[y][x]
+                            scoreBoard[y][x] = 0
+
+                        }
+                    }
+                }
+            }
+        }
+
         fallingValidation()
     }
 }
@@ -509,4 +571,5 @@ elements.createArray()
 elements.createGameStateArray()
 elements.spawnCoronaVirus()
 elements.getRandomPill()
+elements.pillInterval()
 elements.movePill()
