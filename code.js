@@ -18,6 +18,7 @@ let waiting = false
 let keysActive = true
 let hittingTime = false
 let pressInterval
+let checkAfterInterval
 
 const elements = {
 
@@ -292,6 +293,7 @@ const elements = {
 
         falling = setInterval(() => {
 
+            keysActive = true
             let last = gameBoard.pop()
             gameBoard.unshift(last)
 
@@ -301,8 +303,9 @@ const elements = {
 
             // console.log("rząd: " + activeRow + ", item: " + activeCell)
 
-            setTimeout(() => {
+            checkAfterInterval = setTimeout(() => {
                 elements.gameMechanic()
+                keysActive = false
             }, 475);
 
         }, 500);
@@ -352,7 +355,7 @@ const elements = {
             if (e.keyCode == lastKey) {
                 addEventListener("keydown", checkKey)
                 // console.log("puszczono: " + e.keyCode)
-                clearInterval(pressInterval) //!!!
+                clearInterval(pressInterval)
             }
         }
 
@@ -434,8 +437,9 @@ const elements = {
 
                         if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
                             clearInterval(falling)
+                            clearInterval(pressInterval)
+                            clearTimeout(checkAfterInterval)
                             keysActive = false
-                            clearInterval(pressInterval) ///!!!
 
                             fastFalling = setInterval(() => {
 
@@ -640,13 +644,11 @@ const elements = {
 
                             scoreBoard[y + 1][x] = scoreBoard[y][x]
                             scoreBoard[y][x] = 0
-
                         }
                     }
                 }
             }
         }
-
         fallingValidation()
     }
 }
