@@ -4,6 +4,7 @@ let level = 4
 let gameBoard = []
 let scoreBoard = []
 let pairsBoard = []
+let throwArray = []
 let firstColor
 let secoundColor
 let falling
@@ -19,6 +20,77 @@ let keysActive = true
 let hittingTime = false
 
 const elements = {
+
+    menu: function () {
+
+        elements.startGame()
+    },
+
+    startGame: function () {
+
+        let game = document.querySelector("#game")
+        game.style.display = "block"
+        game.style.backgroundImage = "url('img/pf.png')"
+
+        elements.createArray()
+        elements.createGameStateArray()
+        elements.spawnCoronaVirus()
+        elements.getRandomPill()
+        elements.pillInterval()
+        elements.movePill()
+    },
+
+    createThrowArray: function () {
+
+        function pillThrow() {
+
+            throwArray = []
+
+            for (let y = 0; y < 8; y++) {
+
+                let row = []
+                throwArray.push(row)
+
+                for (let x = 0; x < 12; x++) {
+                    row.push(0)
+                }
+            }
+
+            throwArray[3][9] = [firstColor, "left"]
+            throwArray[3][10] = [secoundColor, "right"]
+
+            console.log(throwArray)
+        }
+        pillThrow()
+
+    },
+
+    animations: function () {
+
+        function renderAnimation() {
+            let animation = document.getElementById("animation")
+            animation.innerHTML = ""
+            for (let y = 0; y < 7; y++) {
+
+                let tr = document.createElement("tr")
+                animation.appendChild(tr)
+
+                for (let x = 0; x < 11; x++) {
+                    let td = document.createElement("td")
+                    tr.appendChild(td)
+
+                    if (throwArray[y][x][0] == 1) {
+                        td.style.backgroundImage = "url('img/1/1_dot.png')"
+                    } else if (throwArray[y][x][0] == 2) {
+                        td.style.backgroundImage = "url('img/2/2_dot.png')"
+                    } else if (throwArray[y][x][0] == 3) {
+                        td.style.backgroundImage = "url('img/3/3_dot.png')"
+                    }
+                }
+            }
+        }
+        renderAnimation()
+    },
 
     createArray: function () {
 
@@ -190,19 +262,32 @@ const elements = {
 
     getRandomPill: function () {
 
-        firstColor = Math.floor(Math.random() * 3) + 1
-        secoundColor = Math.floor(Math.random() * 3) + 1
+        if (scoreBoard[0][3] != 0 || scoreBoard[0][4] != 0) {
+            let gameInfo = document.querySelector("#game-info")
+            gameInfo.style.display = "block"
+            gameInfo.style.backgroundImage = "url('img/go.png')"
 
-        gameBoard[0][3] = firstColor
-        gameBoard[0][4] = secoundColor
+        } else {
 
-        pillNumber++
-        console.log("Tabletka nr: " + pillNumber)
+            firstColor = Math.floor(Math.random() * 3) + 1
+            secoundColor = Math.floor(Math.random() * 3) + 1
 
-        elements.renderGameboard()
+            elements.createThrowArray()
+            elements.animations()
+
+            gameBoard[0][3] = firstColor
+            gameBoard[0][4] = secoundColor
+
+            pillNumber++
+            console.log("Tabletka nr: " + pillNumber)
+
+            elements.renderGameboard()
+        }
     },
 
     pillInterval: function () {
+
+        elements.gameMechanic()
 
         falling = setInterval(() => {
 
@@ -444,7 +529,6 @@ const elements = {
                         if (goFast == false) {
                             elements.movePill()
                         }
-
                         elements.pillInterval()
                         goFast = true
                         keysActive = true
@@ -566,10 +650,4 @@ const elements = {
         fallingValidation()
     }
 }
-
-elements.createArray()
-elements.createGameStateArray()
-elements.spawnCoronaVirus()
-elements.getRandomPill()
-elements.pillInterval()
-elements.movePill()
+elements.menu()

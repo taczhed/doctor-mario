@@ -6,15 +6,17 @@ body {
 
 div#game {
     position: absolute;
+    display: none;
+    z-index: 0;
     left: calc(50% - 640px / 2);
     top: calc(50% - 384px / 2);
     width: 640px;
     height: 384px;
-    background-image: url("img/pf.png");
 }
 
-table {
+table#board {
     position: absolute;
+    z-index: 1;
     width: 128px;
     left: 273px;
     top: 95px;
@@ -24,11 +26,40 @@ table {
     /* border: 1px solid red; */
 }
 
-td {
+table#board td {
     width: 16px;
     height: 16px;
     margin: 0;
     padding: 0;
+    /* border: white 1px dotted; */
+}
+
+div#game-info {
+    display: none;
+    z-index: 3;
+    position: absolute;
+    width: 334px;
+    height: 119px;
+    left: calc(50% - 334px / 2);
+    top: calc(50% - 119px / 2);
+}
+
+table#animation {
+    position: absolute;
+    z-index: 2;
+    right: 128px;
+    top: 0px;
+    margin: 0;
+    padding: 0;
+    border-spacing: 0px 0px;
+}
+
+table#animation td {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    border: red 1px dotted;
 }
 
 /* div#pill{
