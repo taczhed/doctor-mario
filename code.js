@@ -17,7 +17,8 @@ let lastKey
 let waiting = false
 let keysActive = true
 let hittingTime = false
-let pressInterval
+let pressRightInterval
+let pressLeftInterval
 let stillPressing
 let checkAfterInterval
 
@@ -37,61 +38,10 @@ const elements = {
         elements.createArray()
         elements.createGameStateArray()
         elements.spawnCoronaVirus()
+        elements.renderGameboard()
         elements.getRandomPill()
-        elements.pillInterval()
+        elements.createThrowArray()
         elements.movePill()
-    },
-
-    createThrowArray: function () {
-
-        function pillThrow() {
-
-            throwArray = []
-
-            for (let y = 0; y < 8; y++) {
-
-                let row = []
-                throwArray.push(row)
-
-                for (let x = 0; x < 12; x++) {
-                    row.push(0)
-                }
-            }
-
-            throwArray[3][9] = [firstColor, "left"]
-            throwArray[3][10] = [secoundColor, "right"]
-
-            // console.log(throwArray)
-        }
-        pillThrow()
-
-    },
-
-    animations: function () {
-
-        function renderAnimation() {
-            let animation = document.getElementById("animation")
-            animation.innerHTML = ""
-            for (let y = 0; y < 7; y++) {
-
-                let tr = document.createElement("tr")
-                animation.appendChild(tr)
-
-                for (let x = 0; x < 11; x++) {
-                    let td = document.createElement("td")
-                    tr.appendChild(td)
-
-                    if (throwArray[y][x][0] == 1) {
-                        td.style.backgroundImage = "url('img/1/1_dot.png')"
-                    } else if (throwArray[y][x][0] == 2) {
-                        td.style.backgroundImage = "url('img/2/2_dot.png')"
-                    } else if (throwArray[y][x][0] == 3) {
-                        td.style.backgroundImage = "url('img/3/3_dot.png')"
-                    }
-                }
-            }
-        }
-        renderAnimation()
     },
 
     createArray: function () {
@@ -262,7 +212,7 @@ const elements = {
         }
     },
 
-    getRandomPill: function () {
+    spawnPill: function () {
 
         if (scoreBoard[0][3] != 0 || scoreBoard[0][4] != 0) {
             let gameInfo = document.querySelector("#game-info")
@@ -271,21 +221,22 @@ const elements = {
             clearInterval(falling)
 
         } else {
-
-            firstColor = Math.floor(Math.random() * 3) + 1
-            secoundColor = Math.floor(Math.random() * 3) + 1
-
-            elements.createThrowArray()
-            elements.animations()
-
+            // console.log("Tabletka nr: " + pillNumber)
+            // setTimeout(() => {
             gameBoard[0][3] = firstColor
             gameBoard[0][4] = secoundColor
-
-            pillNumber++
-            // console.log("Tabletka nr: " + pillNumber)
-
             elements.renderGameboard()
+            // }, 600);
         }
+
+    },
+
+    getRandomPill: function () {
+
+        firstColor = Math.floor(Math.random() * 3) + 1
+        secoundColor = Math.floor(Math.random() * 3) + 1
+        pillNumber++
+
     },
 
     pillInterval: function () {
@@ -306,7 +257,7 @@ const elements = {
                 elements.gameMechanic()
                 stillPressing = false
                 keysActive = false
-            }, 480);
+            }, 475);
 
             activeRow++
 
@@ -358,7 +309,8 @@ const elements = {
             if (e.keyCode == lastKey) {
                 addEventListener("keydown", checkKey)
                 // console.log("puszczono: " + e.keyCode)
-                clearInterval(pressInterval)
+                clearInterval(pressLeftInterval)
+                clearInterval(pressRightInterval)
             }
         }
 
@@ -370,101 +322,102 @@ const elements = {
                 removeEventListener("keydown", checkKey)
                 lastKey = e.keyCode
 
-                pressInterval = setInterval(function () {
-                    if (stillPressing == true) {
-                        press()
+                if (e.keyCode == '38' || e.keyCode == '87') {
+                    //góra
+
+                    if (activeRow != 0) {
+
+                        if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
+
+                            if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
+
+                                gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow - 1][activeCell]
+                                gameBoard[activeRow - 1][activeCell] = 0
+                                state = "horizontal"
+                            }
+
+                        } else if (state == "horizontal") {
+
+                            gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell + 1]
+                            gameBoard[activeRow][activeCell + 1] = 0
+                            state = "vertical"
+
+                        } else {
+
+                            gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow][activeCell]
+                            gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
+                            gameBoard[activeRow - 1][activeCell] = 0
+                            state = "horizontal"
+                        }
+                        // console.log(state)
+
                     }
-                }, 200)
+                }
+                else if (e.keyCode == '16') {
+                    // shift
+                    if (activeRow != 0) {
 
-                press()
+                        if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
 
-                function press() {
+                            if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
 
-                    if (e.keyCode == '38' || e.keyCode == '87') {
-                        //góra
-
-                        if (activeRow != 0) {
-
-                            if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
-
-                                if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
-
-                                    gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow - 1][activeCell]
-                                    gameBoard[activeRow - 1][activeCell] = 0
-                                    state = "horizontal"
-                                }
-
-                            } else if (state == "horizontal") {
-
-                                gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell + 1]
-                                gameBoard[activeRow][activeCell + 1] = 0
-                                state = "vertical"
-
-                            } else {
-
-                                gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow][activeCell]
+                                gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow][activeCell]
                                 gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
                                 gameBoard[activeRow - 1][activeCell] = 0
                                 state = "horizontal"
                             }
-                            // console.log(state)
 
+                        } else if (state == "horizontal") {
+
+                            gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell]
+                            gameBoard[activeRow][activeCell] = gameBoard[activeRow][activeCell + 1]
+                            gameBoard[activeRow][activeCell + 1] = 0
+                            state = "vertical"
+
+                        } else {
+
+                            gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow - 1][activeCell]
+                            gameBoard[activeRow - 1][activeCell] = 0
+                            state = "horizontal"
                         }
                     }
-                    else if (e.keyCode == '16') {
-                        // shift
-                        if (activeRow != 0) {
+                }
+                else if (e.keyCode == '40' || e.keyCode == '83') {
+                    //dół
 
-                            if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
+                    if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
+                        clearInterval(falling)
+                        clearInterval(pressLeftInterval)
+                        clearInterval(pressRightInterval)
+                        clearTimeout(checkAfterInterval)
+                        keysActive = false
 
-                                if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
+                        fastFalling = setInterval(() => {
 
-                                    gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow][activeCell]
-                                    gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
-                                    gameBoard[activeRow - 1][activeCell] = 0
-                                    state = "horizontal"
-                                }
+                            let last = gameBoard.pop()
+                            gameBoard.unshift(last)
 
-                            } else if (state == "horizontal") {
+                            elements.renderGameboard()
+                            activeRow++
+                            elements.gameMechanic()
 
-                                gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell]
-                                gameBoard[activeRow][activeCell] = gameBoard[activeRow][activeCell + 1]
-                                gameBoard[activeRow][activeCell + 1] = 0
-                                state = "vertical"
-
-                            } else {
-
-                                gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow - 1][activeCell]
-                                gameBoard[activeRow - 1][activeCell] = 0
-                                state = "horizontal"
-                            }
-                        }
+                        }, 20);
                     }
-                    else if (e.keyCode == '40' || e.keyCode == '83') {
-                        //dół
+                }
+                else if (e.keyCode == '37' || e.keyCode == '65') {
+                    //lewo
 
-                        if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
-                            clearInterval(falling)
-                            clearInterval(pressInterval)
-                            clearTimeout(checkAfterInterval)
-                            keysActive = false
+                    clearInterval(pressRightInterval)
+                    leftPress()
 
-                            fastFalling = setInterval(() => {
-
-                                let last = gameBoard.pop()
-                                gameBoard.unshift(last)
-
-                                elements.renderGameboard()
-                                activeRow++
-                                elements.gameMechanic()
-
-                            }, 20);
+                    pressLeftInterval = setInterval(function () {
+                        if (stillPressing == true) {
+                            leftPress()
+                            elements.renderGameboard()
                         }
-                    }
-                    else if (e.keyCode == '37' || e.keyCode == '65') {
-                        //lewo
+                    }, 200)
 
-
+                    function leftPress() {
                         if (gameBoard[activeRow][0] != 0 || scoreBoard[activeRow][activeCell - 1] != 0 && state == "horizontal") {
                         } else if (state == "vertical" && scoreBoard[activeRow][activeCell - 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell - 1] != 0) {
 
@@ -475,11 +428,22 @@ const elements = {
                                 gameBoard[y].push(firstColumn)
                             }
                         }
-
                     }
-                    else if (e.keyCode == '39' || e.keyCode == '68') {
-                        //prawo
+                }
+                else if (e.keyCode == '39' || e.keyCode == '68') {
+                    //prawo
 
+                    clearInterval(pressLeftInterval)
+                    rightPress()
+
+                    pressRightInterval = setInterval(function () {
+                        if (stillPressing == true) {
+                            rightPress()
+                            elements.renderGameboard()
+                        }
+                    }, 200)
+
+                    function rightPress() {
                         if (gameBoard[activeRow][7] != 0 || scoreBoard[activeRow][activeCell + 2] != 0 && state == "horizontal") {
                         } else if (state == "vertical" && scoreBoard[activeRow][activeCell + 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell + 1] != 0) {
 
@@ -491,8 +455,8 @@ const elements = {
                             }
                         }
                     }
-                    elements.renderGameboard()
                 }
+                elements.renderGameboard()
             }
         }
     },
@@ -536,14 +500,13 @@ const elements = {
                     gameBoard = []
                     elements.createArray()
 
-                    elements.getRandomPill() //Ważne
-                    clearInterval(pressInterval) //!!!!
+                    clearInterval(pressRightInterval) //!!!!
+                    clearInterval(pressLeftInterval) //!!!!
 
                     setTimeout(() => {
                         clearInterval(grav)
-                        elements.pillInterval()
+                        elements.createThrowArray()
                         keysActive = true
-
                     }, 2000);
                 }
                 saveData()
@@ -657,6 +620,239 @@ const elements = {
             }
         }
         fallingValidation()
+    },
+
+    createThrowArray: function () {
+
+        let multipler = 25
+
+        function pillThrow() {
+
+            throwArray = []
+
+            for (let y = 0; y < 8; y++) {
+
+                let row = []
+                throwArray.push(row)
+
+                for (let x = 0; x < 12; x++) {
+                    row.push([0, "none"])
+                }
+            }
+
+            throwArray[3][10] = [firstColor, "left"]
+            throwArray[3][11] = [secoundColor, "right"]
+            throwArray[4][11] = [4, "top"]
+            throwArray[5][11] = [4, "cen"]
+            throwArray[6][11] = [4, "bot"]
+
+            console.log(throwArray)
+        }
+        pillThrow()
+
+        function pillRot() {
+
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 12; x++) {
+
+                    if (throwArray[y][x][1] == "left") {
+                        throwArray[y][x][1] = "down"
+                    } else if (throwArray[y][x][1] == "down") {
+                        throwArray[y][x][1] = "right"
+                    } else if (throwArray[y][x][1] == "right") {
+                        throwArray[y][x][1] = "up"
+                    } else if (throwArray[y][x][1] == "up") {
+                        throwArray[y][x][1] = "left"
+                    }
+                }
+            }
+            renderAnimation()
+        }
+
+        function renderAnimation() {
+            let animation = document.getElementById("animation")
+            animation.innerHTML = ""
+            for (let y = 0; y < 8; y++) {
+
+                let tr = document.createElement("tr")
+                animation.appendChild(tr)
+
+                for (let x = 0; x < 12; x++) {
+                    let td = document.createElement("td")
+                    tr.appendChild(td)
+
+                    if (throwArray[y][x][0] == 4 || throwArray[y][x][0] == 5 || throwArray[y][x][0] == 6) {
+                        td.style.backgroundImage = "url('img/hands/" + throwArray[y][x][0] + "" + throwArray[y][x][1] + ".png')"
+                    } else if (throwArray[y][x][0] != 0 && throwArray[y][x][0] != 4 && throwArray[y][x][1] != "none") {
+                        td.style.backgroundImage = "url('img/" + throwArray[y][x][0] + "/" + throwArray[y][x][0] + "_" + throwArray[y][x][1] + ".png')"
+
+                    }
+                }
+            }
+        }
+        renderAnimation()
+
+        //animacja 
+
+        setTimeout(() => {
+            throwArray[2][10] = throwArray[3][11]
+            throwArray[3][11] = throwArray[0][0]
+            pillRot()
+        }, 1 * multipler);
+        setTimeout(() => {
+            throwArray[2][9] = throwArray[2][10]
+            throwArray[2][10] = throwArray[3][10]
+            throwArray[3][10] = throwArray[0][0]
+            pillRot()
+        }, 2 * multipler);
+        setTimeout(() => {
+            throwArray[1][9] = throwArray[2][10]
+            throwArray[2][10] = throwArray[0][0]
+            pillRot()
+        }, 3 * multipler);
+        setTimeout(() => {
+            throwArray[1][8] = throwArray[1][9]
+            throwArray[1][9] = throwArray[2][9]
+            throwArray[2][9] = throwArray[0][0]
+
+            throwArray[4][11] = throwArray[0][0]
+            throwArray[5][11] = [5, "topright"]
+            throwArray[6][11] = [5, "botright"]
+            throwArray[5][10] = [5, "topleft"]
+            throwArray[6][10] = [5, "botleft"]
+            pillRot()
+        }, 4 * multipler);
+        setTimeout(() => {
+            throwArray[0][8] = throwArray[1][9]
+            throwArray[1][9] = throwArray[0][0]
+            pillRot()
+        }, 5 * multipler);
+        setTimeout(() => {
+            throwArray[1][7] = throwArray[0][8]
+            throwArray[0][8] = throwArray[0][0]
+            pillRot()
+        }, 6 * multipler);
+        setTimeout(() => {
+            throwArray[0][7] = throwArray[1][8]
+            throwArray[1][8] = throwArray[0][0]
+            throwArray[5][11] = throwArray[0][0]
+            throwArray[5][10] = throwArray[0][0]
+            throwArray[6][10] = throwArray[0][0]
+            throwArray[7][11] = [6, "bot"]
+            throwArray[6][11] = [6, "top"]
+
+            pillRot()
+        }, 7 * multipler);
+        setTimeout(() => {
+            throwArray[1][6] = throwArray[0][7]
+            throwArray[0][7] = throwArray[0][0]
+            pillRot()
+        }, 8 * multipler);
+        setTimeout(() => {
+            throwArray[0][6] = throwArray[1][7]
+            throwArray[1][7] = throwArray[0][0]
+            pillRot()
+        }, 9 * multipler);
+        setTimeout(() => {
+            throwArray[1][5] = throwArray[0][6]
+            throwArray[0][6] = throwArray[0][0]
+            pillRot()
+        }, 10 * multipler);
+        setTimeout(() => {
+            throwArray[0][5] = throwArray[1][6]
+            throwArray[1][6] = throwArray[0][0]
+            pillRot()
+        }, 11 * multipler);
+        setTimeout(() => {
+            throwArray[1][4] = throwArray[0][5]
+            throwArray[0][5] = throwArray[0][0]
+            pillRot()
+        }, 12 * multipler);
+        setTimeout(() => {
+            throwArray[0][4] = throwArray[1][5]
+            throwArray[1][5] = throwArray[0][0]
+            pillRot()
+        }, 13 * multipler);
+        setTimeout(() => {
+            throwArray[1][3] = throwArray[0][4]
+            throwArray[0][4] = throwArray[0][0]
+            pillRot()
+
+        }, 14 * multipler);
+        setTimeout(() => {
+            throwArray[0][3] = throwArray[1][4]
+            throwArray[1][4] = throwArray[0][0]
+            pillRot()
+        }, 15 * multipler);
+        setTimeout(() => {
+            throwArray[1][2] = throwArray[0][3]
+            throwArray[0][3] = throwArray[0][0]
+            pillRot()
+        }, 16 * multipler);
+        setTimeout(() => {
+            throwArray[0][2] = throwArray[1][3]
+            throwArray[1][3] = throwArray[0][0]
+            pillRot()
+        }, 17 * multipler);
+        setTimeout(() => {
+            throwArray[2][1] = throwArray[0][2]
+            throwArray[2][2] = throwArray[1][2]
+            throwArray[0][2] = throwArray[0][0]
+            throwArray[1][2] = throwArray[0][0]
+            pillRot()
+        }, 18 * multipler);
+        setTimeout(() => {
+            throwArray[1][1] = throwArray[2][2]
+            throwArray[2][2] = throwArray[0][0]
+            pillRot()
+        }, 19 * multipler);
+        setTimeout(() => {
+            throwArray[2][0] = throwArray[1][1]
+            throwArray[1][1] = throwArray[0][0]
+            pillRot()
+        }, 20 * multipler);
+        setTimeout(() => {
+            throwArray[3][0] = throwArray[2][0]
+            throwArray[3][1] = throwArray[2][1]
+            throwArray[2][1] = throwArray[0][0]
+            throwArray[2][0] = throwArray[0][0]
+            renderAnimation()
+        }, 21 * multipler);
+        setTimeout(() => {
+            throwArray[4][0] = throwArray[3][0]
+            throwArray[4][1] = throwArray[3][1]
+            throwArray[3][1] = throwArray[0][0]
+            throwArray[3][0] = throwArray[0][0]
+            renderAnimation()
+        }, 22 * multipler);
+        setTimeout(() => {
+            throwArray[5][0] = throwArray[4][0]
+            throwArray[5][1] = throwArray[4][1]
+            throwArray[4][1] = throwArray[0][0]
+            throwArray[4][0] = throwArray[0][0]
+            renderAnimation()
+        }, 23 * multipler);
+        setTimeout(() => {
+            throwArray[5][0] = throwArray[0][0]
+            throwArray[5][1] = throwArray[0][0]
+            throwArray[4][1] = throwArray[0][0]
+            throwArray[4][0] = throwArray[0][0]
+            throwArray[7][11] = throwArray[0][0]
+            throwArray[6][11] = throwArray[0][0]
+
+            throwArray[4][11] = [4, "top"]
+            throwArray[5][11] = [4, "cen"]
+            throwArray[6][11] = [4, "bot"]
+
+            elements.spawnPill()
+            elements.pillInterval()
+
+            elements.getRandomPill()
+            throwArray[3][10] = [firstColor, "left"]
+            throwArray[3][11] = [secoundColor, "right"]
+            renderAnimation()
+        }, 24 * multipler);
     }
+
 }
 elements.menu()
