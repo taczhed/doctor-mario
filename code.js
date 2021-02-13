@@ -17,8 +17,7 @@ let lastKey
 let waiting = false
 let keysActive = true
 let hittingTime = false
-let pressRightInterval
-let pressLeftInterval
+let pressInterval
 let stillPressing
 let checkAfterInterval
 
@@ -257,7 +256,7 @@ const elements = {
                 elements.gameMechanic()
                 stillPressing = false
                 keysActive = false
-            }, 475);
+            }, 485);
 
             activeRow++
 
@@ -309,8 +308,7 @@ const elements = {
             if (e.keyCode == lastKey) {
                 addEventListener("keydown", checkKey)
                 // console.log("puszczono: " + e.keyCode)
-                clearInterval(pressLeftInterval)
-                clearInterval(pressRightInterval)
+                clearInterval(pressInterval)
             }
         }
 
@@ -322,102 +320,100 @@ const elements = {
                 removeEventListener("keydown", checkKey)
                 lastKey = e.keyCode
 
-                if (e.keyCode == '38' || e.keyCode == '87') {
-                    //góra
-
-                    if (activeRow != 0) {
-
-                        if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
-
-                            if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
-
-                                gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow - 1][activeCell]
-                                gameBoard[activeRow - 1][activeCell] = 0
-                                state = "horizontal"
-                            }
-
-                        } else if (state == "horizontal") {
-
-                            gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell + 1]
-                            gameBoard[activeRow][activeCell + 1] = 0
-                            state = "vertical"
-
-                        } else {
-
-                            gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow][activeCell]
-                            gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
-                            gameBoard[activeRow - 1][activeCell] = 0
-                            state = "horizontal"
-                        }
-                        // console.log(state)
-
+                pressInterval = setInterval(function () {
+                    if (stillPressing == true) {
+                        press()
+                        elements.renderGameboard()
                     }
-                }
-                else if (e.keyCode == '16') {
-                    // shift
-                    if (activeRow != 0) {
+                }, 200)
+                press()
 
-                        if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
+                function press() {
 
-                            if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
+                    if (e.keyCode == '38' || e.keyCode == '87') {
+                        //góra
 
-                                gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow][activeCell]
+                        if (activeRow != 0) {
+
+                            if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
+
+                                if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
+
+                                    gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow - 1][activeCell]
+                                    gameBoard[activeRow - 1][activeCell] = 0
+                                    state = "horizontal"
+                                }
+
+                            } else if (state == "horizontal") {
+
+                                gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell + 1]
+                                gameBoard[activeRow][activeCell + 1] = 0
+                                state = "vertical"
+
+                            } else {
+
+                                gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow][activeCell]
                                 gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
                                 gameBoard[activeRow - 1][activeCell] = 0
                                 state = "horizontal"
                             }
+                            // console.log(state)
 
-                        } else if (state == "horizontal") {
-
-                            gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell]
-                            gameBoard[activeRow][activeCell] = gameBoard[activeRow][activeCell + 1]
-                            gameBoard[activeRow][activeCell + 1] = 0
-                            state = "vertical"
-
-                        } else {
-
-                            gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow - 1][activeCell]
-                            gameBoard[activeRow - 1][activeCell] = 0
-                            state = "horizontal"
                         }
                     }
-                }
-                else if (e.keyCode == '40' || e.keyCode == '83') {
-                    //dół
+                    else if (e.keyCode == '16') {
+                        // shift
+                        if (activeRow != 0) {
 
-                    if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
-                        clearInterval(falling)
-                        clearInterval(pressLeftInterval)
-                        clearInterval(pressRightInterval)
-                        clearTimeout(checkAfterInterval)
-                        keysActive = false
+                            if (scoreBoard[activeRow - 1][activeCell] != 0 && state == "horizontal" || scoreBoard[activeRow][activeCell + 1] != 0 && state == "vertical") {
 
-                        fastFalling = setInterval(() => {
+                                if (gameBoard[activeRow][7] != 0 && gameBoard[activeRow - 1][7] != 0 && state == "vertical" && scoreBoard[activeRow][6] == 0) {
 
-                            let last = gameBoard.pop()
-                            gameBoard.unshift(last)
+                                    gameBoard[activeRow][activeCell - 1] = gameBoard[activeRow][activeCell]
+                                    gameBoard[activeRow][activeCell] = gameBoard[activeRow - 1][activeCell]
+                                    gameBoard[activeRow - 1][activeCell] = 0
+                                    state = "horizontal"
+                                }
 
-                            elements.renderGameboard()
-                            activeRow++
-                            elements.gameMechanic()
+                            } else if (state == "horizontal") {
 
-                        }, 20);
-                    }
-                }
-                else if (e.keyCode == '37' || e.keyCode == '65') {
-                    //lewo
+                                gameBoard[activeRow - 1][activeCell] = gameBoard[activeRow][activeCell]
+                                gameBoard[activeRow][activeCell] = gameBoard[activeRow][activeCell + 1]
+                                gameBoard[activeRow][activeCell + 1] = 0
+                                state = "vertical"
 
-                    clearInterval(pressRightInterval)
-                    leftPress()
+                            } else {
 
-                    pressLeftInterval = setInterval(function () {
-                        if (stillPressing == true) {
-                            leftPress()
-                            elements.renderGameboard()
+                                gameBoard[activeRow][activeCell + 1] = gameBoard[activeRow - 1][activeCell]
+                                gameBoard[activeRow - 1][activeCell] = 0
+                                state = "horizontal"
+                            }
                         }
-                    }, 200)
+                    }
+                    else if (e.keyCode == '40' || e.keyCode == '83') {
+                        //dół
 
-                    function leftPress() {
+                        if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
+                            clearInterval(falling)
+                            clearInterval(pressInterval)
+                            clearTimeout(checkAfterInterval)
+                            keysActive = false
+
+                            fastFalling = setInterval(() => {
+
+                                let last = gameBoard.pop()
+                                gameBoard.unshift(last)
+
+                                elements.renderGameboard()
+                                activeRow++
+                                elements.gameMechanic()
+
+                            }, 20);
+                        }
+                    }
+                    else if (e.keyCode == '37' || e.keyCode == '65') {
+                        //lewo
+
                         if (gameBoard[activeRow][0] != 0 || scoreBoard[activeRow][activeCell - 1] != 0 && state == "horizontal") {
                         } else if (state == "vertical" && scoreBoard[activeRow][activeCell - 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell - 1] != 0) {
 
@@ -429,21 +425,10 @@ const elements = {
                             }
                         }
                     }
-                }
-                else if (e.keyCode == '39' || e.keyCode == '68') {
-                    //prawo
+                    else if (e.keyCode == '39' || e.keyCode == '68') {
+                        //prawo
 
-                    clearInterval(pressLeftInterval)
-                    rightPress()
 
-                    pressRightInterval = setInterval(function () {
-                        if (stillPressing == true) {
-                            rightPress()
-                            elements.renderGameboard()
-                        }
-                    }, 200)
-
-                    function rightPress() {
                         if (gameBoard[activeRow][7] != 0 || scoreBoard[activeRow][activeCell + 2] != 0 && state == "horizontal") {
                         } else if (state == "vertical" && scoreBoard[activeRow][activeCell + 1] != 0 || state == "vertical" && scoreBoard[activeRow - 1][activeCell + 1] != 0) {
 
@@ -454,9 +439,10 @@ const elements = {
                                 gameBoard[y].unshift(lastColumn)
                             }
                         }
+
                     }
+                    elements.renderGameboard()
                 }
-                elements.renderGameboard()
             }
         }
     },
@@ -500,8 +486,7 @@ const elements = {
                     gameBoard = []
                     elements.createArray()
 
-                    clearInterval(pressRightInterval) //!!!!
-                    clearInterval(pressLeftInterval) //!!!!
+                    clearInterval(pressInterval) //!!!! //!!!!
 
                     setTimeout(() => {
                         clearInterval(grav)
