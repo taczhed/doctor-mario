@@ -18,6 +18,7 @@ let waiting = false
 let keysActive = true
 let hittingTime = false
 let pressInterval
+let stillPressing
 let checkAfterInterval
 
 const elements = {
@@ -293,21 +294,23 @@ const elements = {
 
         falling = setInterval(() => {
 
+            stillPressing = true
             keysActive = true
+
             let last = gameBoard.pop()
             gameBoard.unshift(last)
 
             elements.renderGameboard()
 
-            activeRow++
-
-            // console.log("rząd: " + activeRow + ", item: " + activeCell)
-
             checkAfterInterval = setTimeout(() => {
                 elements.gameMechanic()
+                stillPressing = false
                 keysActive = false
             }, 475);
 
+            activeRow++
+
+            // console.log("rząd: " + activeRow + ", item: " + activeCell)
         }, 500);
     },
 
@@ -367,7 +370,12 @@ const elements = {
                 removeEventListener("keydown", checkKey)
                 lastKey = e.keyCode
 
-                pressInterval = setInterval(press, 200)
+                pressInterval = setInterval(function () {
+                    if (stillPressing == true) {
+                        press()
+                    }
+                }, 200)
+
                 press()
 
                 function press() {
@@ -483,7 +491,6 @@ const elements = {
                             }
                         }
                     }
-
                     elements.renderGameboard()
                 }
             }
@@ -537,7 +544,7 @@ const elements = {
                         elements.pillInterval()
                         keysActive = true
 
-                    }, 1000);
+                    }, 2000);
                 }
                 saveData()
             }
