@@ -306,7 +306,7 @@ const elements = {
                 elements.gameMechanic()
                 stillPressing = false
                 keysActive = false
-            }, 475);
+            }, 480);
 
             activeRow++
 
