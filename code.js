@@ -14,6 +14,7 @@ let state = "horizontal"
 let fastFalling
 let pillNumber = 0
 let lastKey
+let time
 let waiting = false
 let keysActive = true
 let hittingTime = false
@@ -211,6 +212,9 @@ const elements = {
 
     spawnPill: function () {
 
+        activeRow = 0
+        activeCell = 0
+
         gameBoard[0][3] = firstColor
         gameBoard[0][4] = secoundColor
         elements.renderGameboard()
@@ -226,26 +230,29 @@ const elements = {
 
     pillInterval: function () {
 
-        activeRow = 0
-        activeCell = 0
+        // setTimeout(() => {
 
-        elements.gameMechanic()
+        if (scoreBoard[0][3] != 0 || scoreBoard[0][4] != 0) {
 
-        // let gameInfo = document.querySelector("#game-info")
-        // gameInfo.style.display = "block"
-        // gameInfo.style.backgroundImage = "url('img/go.png')"
-        // clearInterval(falling)
+            let gameInfo = document.querySelector("#game-info")
+            gameInfo.style.display = "block"
+            gameInfo.style.backgroundImage = "url('img/go.png')"
+            clearInterval(falling)
+            clearTimeout(time)
+        } else {
 
-        falling = setInterval(() => {
+            falling = setInterval(() => {
 
-            elements.gameMechanic()
-            activeRow++
-            let last = gameBoard.pop()
-            gameBoard.unshift(last)
-            elements.renderGameboard()
+                elements.gameMechanic()
+                activeRow++
+                let last = gameBoard.pop()
+                gameBoard.unshift(last)
+                elements.renderGameboard()
 
-            // console.log("rząd: " + activeRow + ", item: " + activeCell)
-        }, 500);
+                // console.log("rząd: " + activeRow + ", item: " + activeCell)
+            }, 500);
+
+        }
     },
 
     spawnCoronaVirus: function () {
@@ -433,6 +440,8 @@ const elements = {
 
             if (scoreBoard[activeRow + 1][activeCell] != 0 || scoreBoard[activeRow + 1][activeCell + 1] != 0 && state == "horizontal") {
 
+                console.log("jesty!")
+
                 function saveData() {
 
                     for (let y = 0; y < 16; y++) {
@@ -466,7 +475,7 @@ const elements = {
                     gameBoard = []
                     elements.createArray()
 
-                    setTimeout(() => {
+                    time = setTimeout(() => {
                         clearInterval(grav)
                         elements.createThrowArray()
                         keysActive = true
@@ -608,8 +617,6 @@ const elements = {
             throwArray[4][11] = [4, "top"]
             throwArray[5][11] = [4, "cen"]
             throwArray[6][11] = [4, "bot"]
-
-            console.log(throwArray)
         }
         pillThrow()
 
@@ -809,6 +816,7 @@ const elements = {
 
             elements.spawnPill()
             elements.getRandomPill()
+            elements.gameMechanic()
             elements.pillInterval()
 
 
