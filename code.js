@@ -19,6 +19,11 @@ let waiting = false
 let keysActive = true
 let hittingTime = false
 let pressInterval
+let changeImgInterval
+let loopInterval
+let blue
+let red
+let yellow
 
 const elements = {
 
@@ -33,6 +38,7 @@ const elements = {
         game.style.display = "block"
         game.style.backgroundImage = "url('img/pf.png')"
 
+        elements.dancingAnimation()
         elements.createArray()
         elements.createGameStateArray()
         elements.spawnCoronaVirus()
@@ -235,10 +241,25 @@ const elements = {
         if (scoreBoard[0][3] != 0 || scoreBoard[0][4] != 0) {
 
             let gameInfo = document.querySelector("#game-info")
+            let mario = document.querySelector("#mario")
             gameInfo.style.display = "block"
+            mario.style.display = "block"
             gameInfo.style.backgroundImage = "url('img/go.png')"
             clearInterval(falling)
             clearTimeout(time)
+            clearInterval(loopInterval)
+            clearInterval(changeImgInterval)
+
+            let gr = 2
+            setInterval(() => {
+                blue.setAttribute("src", "/img/lupa/bl/" + gr + ".png")
+                red.setAttribute("src", "/img/lupa/br/" + gr + ".png")
+                yellow.setAttribute("src", "/img/lupa/yl/" + gr + ".png")
+                if (gr == 4) {
+                    gr = 0
+                }
+                gr += 2
+            }, 300);
         } else {
 
             falling = setInterval(() => {
@@ -592,6 +613,59 @@ const elements = {
             }
         }
         fallingValidation()
+    },
+
+    dancingAnimation: function () {
+
+        blue = document.querySelector(".blue")
+        red = document.querySelector(".red")
+        yellow = document.querySelector(".yellow")
+        let num = 1
+
+        var radius = 48
+        var ib = 0
+        var ir = 120
+        var iy = 240
+
+        function loop() {
+
+            var xb = radius * Math.cos((ib / 180) * Math.PI)
+            var yb = radius * Math.sin((ib / 180) * Math.PI)
+
+            var xr = radius * Math.cos((ir / 180) * Math.PI)
+            var yr = radius * Math.sin((ir / 180) * Math.PI)
+
+            var xy = radius * Math.cos((iy / 180) * Math.PI)
+            var yy = radius * Math.sin((iy / 180) * Math.PI)
+
+            blue.style.left = 55 + xb + "px"
+            blue.style.top = 68 + yb + "px"
+
+            red.style.left = 55 + xr + "px"
+            red.style.top = 68 + yr + "px"
+
+            yellow.style.left = 55 + xy + "px"
+            yellow.style.top = 68 + yy + "px"
+
+            ib -= 20
+            ir -= 20
+            iy -= 20
+        }
+        loop()
+        setTimeout(() => {
+            loopInterval = setInterval(loop, 1200)
+        }, 600);
+        function changeImg() {
+            blue.setAttribute("src", "/img/lupa/bl/" + num + ".png")
+            red.setAttribute("src", "/img/lupa/br/" + num + ".png")
+            yellow.setAttribute("src", "/img/lupa/yl/" + num + ".png")
+            if (num == 3) {
+                num = 0
+            }
+            num++
+        }
+        changeImg()
+        changeImgInterval = setInterval(changeImg, 400)
     },
 
     createThrowArray: function () {

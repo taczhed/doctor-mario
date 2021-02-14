@@ -35,13 +35,13 @@ table#board td {
 }
 
 div#game-info {
-    display: none;
+    /* display: none; */
     z-index: 3;
     position: absolute;
-    width: 334px;
-    height: 119px;
-    left: calc(50% - 334px / 2);
-    top: calc(50% - 119px / 2);
+    width: 280px;
+    height: 100px;
+    left: calc(50% - 280px / 2);
+    top: calc(50% - 100px / 2);
 }
 
 table#animation {
@@ -60,6 +60,32 @@ table#animation td {
     margin: 0;
     padding: 0;
     /* border: red 1px dotted; */
+}
+
+div#mario {
+    position: absolute;
+    display: none;
+    width: 115px;
+    height: 114px;
+    z-index: 3;
+    top: 44px;
+    right: 48px;
+    background-image: url("img/go_dr.png");
+}
+
+div#dance {
+    /* border: 1px red solid; */
+    position: absolute;
+    bottom: 3px;
+    left: 30px;
+    width: 180px;
+    height: 180px;
+}
+
+div#dance img {
+    /* border: 1px blue solid; */
+    position: absolute;
+    width: 64px;
 }
 
 /* div#pill{
