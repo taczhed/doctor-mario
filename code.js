@@ -1,6 +1,6 @@
 //global
 "use strict";
-let level = 3
+let level = 4
 let score = 0
 let gameBoard = []
 let scoreBoard = []
