@@ -39,6 +39,11 @@ const elements = {
         game.style.display = "block"
         game.style.backgroundImage = "url('img/pf.png')"
 
+        if (localStorage.score == undefined) {
+            localStorage.clear()
+            localStorage.setItem("score", score)
+        }
+
         elements.dancingAnimation()
         elements.createArray()
         elements.createGameStateArray()
@@ -254,9 +259,9 @@ const elements = {
 
             let gr = 2
             setInterval(() => {
-                blue.setAttribute("src", "/img/lupa/bl/" + gr + ".png")
-                red.setAttribute("src", "/img/lupa/br/" + gr + ".png")
-                yellow.setAttribute("src", "/img/lupa/yl/" + gr + ".png")
+                blue.setAttribute("src", "img/lupa/bl/" + gr + ".png")
+                red.setAttribute("src", "img/lupa/br/" + gr + ".png")
+                yellow.setAttribute("src", "img/lupa/yl/" + gr + ".png")
                 if (gr == 4) {
                     gr = 0
                 }
@@ -489,7 +494,7 @@ const elements = {
         scoreDiv.innerHTML = text
         let topDiv = document.querySelector("#top")
         topDiv.innerHTML = textTop
-        console.log(localStorage.score)
+        // console.log(localStorage.score)
         if (localStorage.score < score) {
             localStorage.setItem("score", score)
         }
@@ -501,9 +506,9 @@ const elements = {
             gameInfo.style.backgroundImage = "url('img/sc.png')"
             gameInfo.style.width = "350px"
             gameInfo.style.left = "calc(50% - 350px / 2)"
-            blue.setAttribute("src", "/img/lupa/bl/2.png")
-            red.setAttribute("src", "/img/lupa/br/2.png")
-            yellow.setAttribute("src", "/img/lupa/yl/2.png")
+            blue.setAttribute("src", "img/lupa/bl/2.png")
+            red.setAttribute("src", "img/lupa/br/2.png")
+            yellow.setAttribute("src", "img/lupa/yl/2.png")
             clearInterval(falling)
             clearTimeout(time)
             clearInterval(loopInterval)
@@ -516,8 +521,6 @@ const elements = {
         function fallingValidation() {
 
             if (scoreBoard[activeRow + 1][activeCell] != 0 || scoreBoard[activeRow + 1][activeCell + 1] != 0 && state == "horizontal") {
-
-                console.log("jesty!")
 
                 function saveData() {
 
@@ -712,9 +715,9 @@ const elements = {
             loopInterval = setInterval(loop, 1200)
         }, 600);
         function changeImg() {
-            blue.setAttribute("src", "/img/lupa/bl/" + num + ".png")
-            red.setAttribute("src", "/img/lupa/br/" + num + ".png")
-            yellow.setAttribute("src", "/img/lupa/yl/" + num + ".png")
+            blue.setAttribute("src", "img/lupa/bl/" + num + ".png")
+            red.setAttribute("src", "img/lupa/br/" + num + ".png")
+            yellow.setAttribute("src", "img/lupa/yl/" + num + ".png")
             if (num == 3) {
                 num = 0
             }
