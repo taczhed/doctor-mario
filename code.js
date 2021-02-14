@@ -18,8 +18,6 @@ let waiting = false
 let keysActive = true
 let hittingTime = false
 let pressInterval
-let stillPressing
-let checkAfterInterval
 
 const elements = {
 
@@ -213,21 +211,9 @@ const elements = {
 
     spawnPill: function () {
 
-        if (scoreBoard[0][3] != 0 || scoreBoard[0][4] != 0) {
-            let gameInfo = document.querySelector("#game-info")
-            gameInfo.style.display = "block"
-            gameInfo.style.backgroundImage = "url('img/go.png')"
-            clearInterval(falling)
-
-        } else {
-            // console.log("Tabletka nr: " + pillNumber)
-            // setTimeout(() => {
-            gameBoard[0][3] = firstColor
-            gameBoard[0][4] = secoundColor
-            elements.renderGameboard()
-            // }, 600);
-        }
-
+        gameBoard[0][3] = firstColor
+        gameBoard[0][4] = secoundColor
+        elements.renderGameboard()
     },
 
     getRandomPill: function () {
@@ -240,25 +226,23 @@ const elements = {
 
     pillInterval: function () {
 
+        activeRow = 0
+        activeCell = 0
+
         elements.gameMechanic()
+
+        // let gameInfo = document.querySelector("#game-info")
+        // gameInfo.style.display = "block"
+        // gameInfo.style.backgroundImage = "url('img/go.png')"
+        // clearInterval(falling)
 
         falling = setInterval(() => {
 
-            stillPressing = true
-            keysActive = true
-
+            elements.gameMechanic()
+            activeRow++
             let last = gameBoard.pop()
             gameBoard.unshift(last)
-
             elements.renderGameboard()
-
-            checkAfterInterval = setTimeout(() => {
-                elements.gameMechanic()
-                stillPressing = false
-                keysActive = false
-            }, 485);
-
-            activeRow++
 
             // console.log("rząd: " + activeRow + ", item: " + activeCell)
         }, 500);
@@ -321,10 +305,7 @@ const elements = {
                 lastKey = e.keyCode
 
                 pressInterval = setInterval(function () {
-                    if (stillPressing == true) {
-                        press()
-                        elements.renderGameboard()
-                    }
+                    press()
                 }, 200)
                 press()
 
@@ -396,7 +377,6 @@ const elements = {
                         if (scoreBoard[activeRow + 1][activeCell] == 0 && scoreBoard[activeRow + 1][activeCell + 1] == 0 && state == "horizontal" || scoreBoard[activeRow + 1][activeCell] == 0 && state == "vertical") {
                             clearInterval(falling)
                             clearInterval(pressInterval)
-                            clearTimeout(checkAfterInterval)
                             keysActive = false
 
                             fastFalling = setInterval(() => {
@@ -478,15 +458,13 @@ const elements = {
                     //resetowanie
 
                     clearInterval(falling)
-                    keysActive = false
-                    activeRow = 0
-                    activeCell = 0
-                    state = "horizontal"
                     clearInterval(fastFalling)
+                    clearInterval(pressInterval)
+
+                    keysActive = false
+                    state = "horizontal"
                     gameBoard = []
                     elements.createArray()
-
-                    clearInterval(pressInterval) //!!!! //!!!!
 
                     setTimeout(() => {
                         clearInterval(grav)
@@ -830,9 +808,10 @@ const elements = {
             throwArray[6][11] = [4, "bot"]
 
             elements.spawnPill()
+            elements.getRandomPill()
             elements.pillInterval()
 
-            elements.getRandomPill()
+
             throwArray[3][10] = [firstColor, "left"]
             throwArray[3][11] = [secoundColor, "right"]
             renderAnimation()
