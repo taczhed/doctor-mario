@@ -88,6 +88,36 @@ div#dance img {
     width: 64px;
 }
 
+div#top {
+    position: absolute;
+    top: 79px;
+    left: 80px;
+    width: 112px;
+    height: 16px;
+    /* border: 1px solid red; */
+}
+
+div#score {
+    position: absolute;
+    top: 128px;
+    left: 80px;
+    width: 112px;
+    height: 16px;
+    /* border: 1px solid red; */
+}
+
+div#score img {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+div#top img {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
 /* div#pill{
     position: absolute;
     width: 32px;

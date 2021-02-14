@@ -1,6 +1,7 @@
 //global
 "use strict";
-let level = 4
+let level = 3
+let score = 0
 let gameBoard = []
 let scoreBoard = []
 let pairsBoard = []
@@ -46,6 +47,7 @@ const elements = {
         elements.getRandomPill()
         elements.createThrowArray()
         elements.movePill()
+        elements.numberOfViruses()
     },
 
     createArray: function () {
@@ -455,6 +457,60 @@ const elements = {
         }
     },
 
+    numberOfViruses: function () {
+
+        let virusNumber = 0
+        let text = ""
+        let textTop = ""
+        for (let y = 0; y < 16; y++) {
+            for (let x = 0; x < 8; x++) {
+                if (scoreBoard[y][x] != 0 && pairsBoard[y][x] == 0) {
+                    virusNumber++
+                }
+            }
+        }
+        //wincheck
+        score = (level * 100) - (virusNumber * 100)
+        let topScore = localStorage.score.toString()
+        let tc = topScore
+        let sc = score.toString()
+        let len = sc
+        for (let r = 0; r < 7 - len.length; r++) {
+            sc = "0" + sc
+        }
+        for (let r = 0; r < 7 - tc.length; r++) {
+            topScore = "0" + topScore
+        }
+        for (let i = 0; i < 7; i++) {
+            text = text + '<img class="sc" src="img/cyfry/' + sc[i] + '.png"></img>'
+            textTop = textTop + '<img class="sc" src="img/cyfry/' + topScore[i] + '.png"></img>'
+        }
+        let scoreDiv = document.querySelector("#score")
+        scoreDiv.innerHTML = text
+        let topDiv = document.querySelector("#top")
+        topDiv.innerHTML = textTop
+        console.log(localStorage.score)
+        if (localStorage.score < score) {
+            localStorage.setItem("score", score)
+        }
+
+        if (virusNumber == 0) {
+
+            let gameInfo = document.querySelector("#game-info")
+            gameInfo.style.display = "block"
+            gameInfo.style.backgroundImage = "url('img/sc.png')"
+            gameInfo.style.width = "350px"
+            gameInfo.style.left = "calc(50% - 350px / 2)"
+            blue.setAttribute("src", "/img/lupa/bl/2.png")
+            red.setAttribute("src", "/img/lupa/br/2.png")
+            yellow.setAttribute("src", "/img/lupa/yl/2.png")
+            clearInterval(falling)
+            clearTimeout(time)
+            clearInterval(loopInterval)
+            clearInterval(changeImgInterval)
+        }
+    },
+
     gameMechanic: function () {
 
         function fallingValidation() {
@@ -472,6 +528,7 @@ const elements = {
                                 scoreBoard[y][x] = gameBoard[y][x]
                                 pairsBoard[y][x] = pillNumber
                             }
+
                         }
                     }
 
@@ -482,7 +539,7 @@ const elements = {
                         hitValidation(3)
                         gravity()
                         elements.renderGameboard()
-
+                        elements.numberOfViruses()
                     }, 50);
 
                     //resetowanie
@@ -556,7 +613,6 @@ const elements = {
                     scoreBoard[y][x] = 0
                     pairsBoard[y][x] = 0
                     elements.renderGameboard()
-
                 }, 200);
             }
         }
@@ -892,13 +948,10 @@ const elements = {
             elements.getRandomPill()
             elements.gameMechanic()
             elements.pillInterval()
-
-
             throwArray[3][10] = [firstColor, "left"]
             throwArray[3][11] = [secoundColor, "right"]
             renderAnimation()
         }, 24 * multipler);
     }
-
 }
 elements.menu()
