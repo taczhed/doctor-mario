@@ -456,7 +456,11 @@ const elements = {
                         }
 
                     }
-                    elements.renderGameboard()
+
+                    if (keysActive == true) {
+                        elements.renderGameboard()
+                        console.log("wrr")
+                    }
                 }
             }
         }
